@@ -1,0 +1,81 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for Node.js 14 runtime (useful if you're using nvm)
+.nvmrc
+
+# Directory for TypeScript compilation output
+dist
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# dotenv environment file
+.env
+
+# VSCode settings (if you use Visual Studio Code)
+.vscode/
+
+# Mac OS X and Windows thumbs.db files
+Thumbs.db
+ehthumbs.db
+
+# Folder config file for Windows
+Desktop.ini
+
+# Recycle Bin used on file shares and mounted volumes
+$RECYCLE.BIN/
+
+# macOS Finder folder settings
+.DS_Store
+
+# Node.js generated files
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Mongoose models
+models/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE specific files
+.idea/
+.vscode/
+
+# Logs
+logs
+*.log
+
+# User-specific files
+.npmrc
+
+# Editor directories
+.idea/
+
+# Sensitive or environment-specific files
+config.js
+config.json
