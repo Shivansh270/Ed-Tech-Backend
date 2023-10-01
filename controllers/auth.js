@@ -265,6 +265,8 @@ exports.changePassword = async (res, req) => {
       expiresIn: "3h",
     });
 
+    await mailSender(email, "Password change", "Password change is sucessful");
+
     const options = {
       expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       HTMLOnly: true,
