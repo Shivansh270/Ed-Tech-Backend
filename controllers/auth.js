@@ -1,14 +1,17 @@
 const OTP = require("../models/Otp");
-const user = require("../models/User");
+const User = require("../models/User");
 var otpGenerator = requore("otp-generator");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 //send otp code
-exports.otp = async (req, res) => {
+exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
 
     //check if user already exist
-    const checkUserPresent = await user.findOne({ emial });
+    const checkUserPresent = await User.findOne({ emial });
     if (checkUserPresent) {
       return res.status(401).json({
         message: "user already exist",
@@ -85,7 +88,7 @@ exports.signup = async (res, req) => {
         message: "All the fields are required",
       });
     }
-    const existingUser = await user.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(403).json({
@@ -104,7 +107,7 @@ exports.signup = async (res, req) => {
         success: false,
         message: "Enter Otp",
       });
-    } else if (opt !== recentOtp.otp) {
+    } else if (otp !== recentOtp.otp) {
       return res.status(405).json({
         success: false,
         message: "Invalid Otp",
@@ -119,14 +122,14 @@ exports.signup = async (res, req) => {
         message: "hash failed",
       });
     }
-    const profileDetails = await user.create({
+    const profileDetails = await User.create({
       gender,
       dateOfBirth,
       about,
       contactNumber,
     });
 
-    const user = user.create({
+    const user = User.create({
       firstName,
       lastName,
       email,
@@ -147,6 +150,136 @@ exports.signup = async (res, req) => {
     return res.status(500).json({
       success: false,
       message: "registation unsucessful",
+    });
+  }
+};
+
+//LOGIN
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(500).json({
+        success: false,
+        message: "Fill all the details",
+      });
+    }
+
+    const user = await User.findOne({ email }).populate("additionalDetails");
+
+    if (!user) {
+      return res.status(501).json({
+        success: false,
+        message: "Please signup first",
+      });
+    }
+
+    const payload = {
+      email: user.email,
+      id: user._id,
+      accountType: user.accountType,
+    };
+
+    //verify password and generate a jwt tokem
+    if (await bcrypt.compare(password, user.password)) {
+      let token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "3h",
+      });
+
+      user.token = token;
+      user.password = password;
+
+      const options = {
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        HTMLOnly: true,
+      };
+
+      res.cookie("token", token, options).status(200).json({
+        success: true,
+        token,
+        user,
+        message: "login successful",
+      });
+    } else {
+      return res.status(501).json({
+        success: false,
+        message: "Password is incorrect ",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
+      success: false,
+      message: "error while login",
+    });
+  }
+};
+
+//change password
+exports.changePassword = async (res, req) => {
+  try {
+    const { email, oldPassword, newPassword, confirmNewPassword } = req.body;
+    if (!password || !newPassword || !confirmNewPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      return res.status(402).json({
+        success: false,
+        message: "Password does not match",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(403).json({
+        success: false,
+        message: "Incorrect old password",
+      });
+    }
+
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashNewPassword;
+    await user.save();
+
+    const payload = {
+      email: user.email,
+      id: user._id,
+      accountType: user.accountType,
+    };
+
+    let token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "3h",
+    });
+
+    const options = {
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      HTMLOnly: true,
+    };
+
+    res.cookie("token", token, options).status(200).json({
+      success: true,
+      token,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to change password",
     });
   }
 };
