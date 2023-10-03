@@ -30,7 +30,7 @@ exports.createCourse = async (req, res) => {
     const userId = req.user.id;
     //object id of the instructor
     const instructorDetails = await User.findById(userId);
-    clg("Instructor details: ", instructorDetails);
+    console.log("Instructor details: ", instructorDetails);
 
     if (!instructorDetails) {
       return res.status(401).json({
@@ -91,6 +91,37 @@ exports.createCourse = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Course cannot be created",
+    });
+  }
+};
+
+//get all course
+
+exports.getAllCourses = async (req, res) => {
+  try {
+    const allCourses = await Course.find(
+      {},
+      {
+        courseName: true,
+        courseDescription: true,
+        price: true,
+        whatYouWillLearn: true,
+        instructor: true,
+        raitingAndReviews: true,
+        thumbnail: true,
+      }
+    )
+      .populate("instructor")
+      .exec();
+    return res.status(200).json({
+      success: true,
+      message: "All Course fetched sucessfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      allCourses,
     });
   }
 };
