@@ -1,7 +1,7 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
-const Tag = require("../models/Tag");
-const { cerateTag } = require("../controllers/Tag");
+const Tag = require("../models/Category");
+const { cerateTag } = require("./Category");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 require("dotenv").config();
 
@@ -121,7 +121,6 @@ exports.getAllCourses = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message,
-      allCourses,
     });
   }
 };

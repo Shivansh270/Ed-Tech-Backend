@@ -1,6 +1,6 @@
-const Tag = require("../models/Tag");
+const Category = require("../models/Category");
 
-exports.cerateTag = async (req, res) => {
+exports.createCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
 
@@ -11,11 +11,11 @@ exports.cerateTag = async (req, res) => {
       });
     }
 
-    const newTag = await Tag.create({ name, description });
+    const newCategory = await Category.create({ name, description });
 
     return res.status(200).json({
       success: "true",
-      message: "Tag created sucessfully",
+      message: "Category created sucessfully",
     });
   } catch (error) {
     return res.status(400).json({
@@ -25,15 +25,18 @@ exports.cerateTag = async (req, res) => {
   }
 };
 
-//get all tags
-exports.getAllTags = async (req, res) => {
+//get all Category
+exports.getAllCategory = async (req, res) => {
   try {
-    const getAllTags = await Tag.find({}, { name: true, description: true });
+    const getAllCategory = await Category.find(
+      {},
+      { name: true, description: true }
+    );
 
     return res.status(20).json({
       success: "true",
-      message: "All Tag returned sucessfully",
-      getAllTags,
+      message: "All Category returned sucessfully",
+      getAllCategory,
     });
   } catch (error) {
     return res.status(400).json({
