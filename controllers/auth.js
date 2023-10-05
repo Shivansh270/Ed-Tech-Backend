@@ -11,7 +11,7 @@ exports.sendOTP = async (req, res) => {
     const { email } = req.body;
 
     //check if user already exist
-    const checkUserPresent = await User.findOne({ emial });
+    const checkUserPresent = await User.findOne({ email });
     if (checkUserPresent) {
       return res.status(401).json({
         message: "user already exist",
@@ -40,7 +40,7 @@ exports.sendOTP = async (req, res) => {
     //create new entry in db
     const otpPayload = { email, otp };
 
-    const otpBody = await OTP.create(otpPayload);
+    await OTP.create(otpPayload);
 
     res.status(200).json({
       message: "otp sent sucessfully",
@@ -98,7 +98,7 @@ exports.signup = async (res, req) => {
     }
 
     //find most recent otp stored for the user
-    const recentOtp = await OTP.find({ emial }).sort({ created: -1 }).limit(1);
+    const recentOtp = await OTP.find({ email }).sort({ created: -1 }).limit(1);
     console.log(recentOtp);
 
     //validate otp
