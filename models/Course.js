@@ -36,7 +36,7 @@ const course = new mongoose.Schema({
     type: Number,
   },
   thumbnail: {
-    type: String,
+    type: [String],
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
@@ -44,8 +44,7 @@ const course = new mongoose.Schema({
   },
 
   tag: {
-    type: String,
-    trim: true,
+    type: [String],
     required: true,
   },
 
