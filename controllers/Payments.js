@@ -51,6 +51,10 @@ exports.capturePayment = async (req, res) => {
       amount: price * 100,
       currency: currency,
       recipt: Math.random(Date.now()),
+      notes: {
+        CourseId: course_id,
+        user_id,
+      },
     };
 
     //create function
@@ -79,4 +83,63 @@ exports.capturePayment = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+//verify signature controller
+
+exports.verifySignature = async (req, res) => {
+  try {
+    const webhookSecret = "123456";
+
+    const signature = req.headers["x-razorpay-signature"];
+
+    const shasum = crypto.createHmac("sha256", webhookSecret);
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest("hex");
+
+    if (digest === signature) {
+      console.log("Payment is authorized");
+
+      const { course_id, user_id } = req.body.payment.payload.entity.notes;
+
+      try {
+        //find the course and update the student in it
+        const enrolledCourse = await Course.findOneAndUpdate(
+          course_id,
+          { $push: { studentsEnrolled: user_id } },
+          { new: true }
+        );
+
+        if (!enrolledCourse) {
+          return res.status(500).json({
+            success: false,
+            message: "falied to find course",
+            error: error.message,
+          });
+        }
+
+        //update course in student object
+        const enrolledStudent = await User.findOneAndUpdate(
+          user_id,
+          {
+            $push: { courses: course_id },
+          },
+          { new: true }
+        );
+        if (!enrolledStudent) {
+          return res.status(500).json({
+            success: false,
+            message: "falied to find student",
+            error: error.message,
+          });
+        }
+
+        const emailResponse = await mailSender(
+          enrolledStudent.email,
+          "congo",
+          "sucess on buying"
+        );
+      } catch (error) {}
+    }
+  } catch (error) {}
 };

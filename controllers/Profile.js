@@ -16,7 +16,7 @@ exports.upateProfile = async (req, res) => {
 
     //find profile
     const userDetails = await User.findById(id);
-    const profileid = await userDetails.additionalDetails;
+    const profileid = userDetails.additionalDetails;
 
     const profileDetails = await Profile.findById(profileid);
 
