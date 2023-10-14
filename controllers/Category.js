@@ -45,3 +45,10 @@ exports.getAllCategory = async (req, res) => {
     });
   }
 };
+
+//category page details controller
+
+exports.createCategoryDetails = async (req, res) => {
+  try {
+  } catch (error) {}
+};

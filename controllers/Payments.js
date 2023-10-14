@@ -29,7 +29,7 @@ exports.capturePayment = async (req, res) => {
       }
 
       //user already has the same course
-      const uid = mongoose.Schema.Types.ObjectId(user_id);
+      const uid = mongoose.Types.ObjectId(user_id);
       if (course.studentsEnrolled.includes(uid)) {
         return res.status(502).json({
           success: false,

@@ -32,7 +32,7 @@ exports.resetPasswordToken = async (res, req) => {
       "Password Reset Link",
       `Password reset link: ${url}`
     );
-    return res.status(400).json({
+    return res.status(200).json({
       success: true,
       message: "Password changed email sent sucessfully",
     });
