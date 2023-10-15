@@ -50,5 +50,39 @@ exports.getAllCategory = async (req, res) => {
 
 exports.createCategoryDetails = async (req, res) => {
   try {
-  } catch (error) {}
+    const { categoryId } = req.body;
+
+    const selectedCategory = await Course.findById(categoryId)
+      .populate("course")
+      .exec();
+
+    //validation
+    if (!selectedCategory) {
+      return res.status(400).json({
+        success: "false",
+        message: error.message,
+      });
+    }
+
+    const differentCourses = await Category.find({
+      _id: { $ne: categoryId },
+    })
+      .populate("course")
+      .exec();
+
+    //di
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        selectedCategory,
+        differentCourses,
+      },
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: "false",
+      message: error.message,
+    });
+  }
 };

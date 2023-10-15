@@ -141,13 +141,13 @@ exports.getCourseDetails = async (req, res) => {
         },
       })
       .populate("courseContent")
-      .populate("raitingAndReviews");
-
-    //   path: "courseContent",
-    //   populate: {
-    //     path: "subSection",
-    //   },
-    // });
+      .populate("raitingAndReviews")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      });
     exec();
 
     if (!courseDetail) {
