@@ -3,7 +3,7 @@ const SubSection = require("../models/SubSection");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 require("dotenv").config();
 
-exports.subSection = async (req, res) => {
+exports.createSubSection = async (req, res) => {
   try {
     const { title, timeDuration, description, sectionId } = req.body;
 

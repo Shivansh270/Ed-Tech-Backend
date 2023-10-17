@@ -37,7 +37,7 @@ exports.createSection = async (req, res) => {
 
 //update section
 
-exports.updateSction = async (req, res) => {
+exports.updateSection = async (req, res) => {
   try {
     const { sectionName, SectionId } = req.body;
 
