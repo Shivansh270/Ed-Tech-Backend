@@ -1,40 +1,44 @@
 const mongoose = require("mongoose");
 const mailSender = require("../utils/mailSender");
+const emailTemplate = require("../mail/templates/emailVerificationTemplate");
 
 const OTPSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: true,
   },
   otp: {
     type: String,
-    required: true,
   },
-  timeStamp: {
-    type: date,
-    default: Date.now(),
-    expire: 5 * 60,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 60 * 5,
   },
 });
 
-const sendVeificationEmail = async (email, otp) => {
+async function sendVerificationEmail(email, otp) {
   try {
     const mailResponse = await mailSender(
       email,
-      "Verification code from Studyzone",
-      otp
+      "Verification Email",
+      emailTemplate(otp)
     );
-    console.log("Mail sent sucessfully", mailResponse);
+    console.log("Email sent successfully: ", mailResponse.response);
   } catch (error) {
-    console.log(("Error in seding otp: ", error));
+    console.log("Error occurred while sending email: ", error);
+    throw error;
   }
-};
+}
 
-OTPSchema.pre("save", async (next) => {
-  await sendVeificationEmail(this.email, this.otp);
+OTPSchema.pre("save", async function (next) {
+  // Use a regular function, not an arrow function
+  console.log("New document saved to database");
+
+  if (this.isNew) {
+    await sendVerificationEmail(this.email, this.otp);
+  }
   next();
 });
 
-module.exports = mongoose.model("OTP", OTPSchema);
-
-
+const OTP = mongoose.model("OTP", OTPSchema);
+module.exports = OTP;

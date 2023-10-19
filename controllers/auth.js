@@ -1,6 +1,6 @@
 const OTP = require("../models/Otp");
 const User = require("../models/User");
-var otpGenerator = requore("otp-generator");
+var otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -185,7 +185,6 @@ exports.sendotp = async (req, res) => {
     // Check if user is already present
     // Find user with provided email
     const checkUserPresent = await User.findOne({ email });
-    // to be used in case of signup
 
     // If user found with provided email
     if (checkUserPresent) {
@@ -209,7 +208,10 @@ exports.sendotp = async (req, res) => {
       otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
       });
+      result = await OTP.findOne({ otp: otp });
     }
+
+    // Include "email" in the OTP payload
     const otpPayload = { email, otp };
     const otpBody = await OTP.create(otpPayload);
     console.log("OTP Body", otpBody);

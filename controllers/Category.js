@@ -64,13 +64,12 @@ exports.categoryPageDetails = async (req, res) => {
       });
     }
 
+    //courses with different category
     const differentCourses = await Category.find({
       _id: { $ne: categoryId },
     })
       .populate("course")
       .exec();
-
-    //di
 
     return res.status(200).json({
       success: true,

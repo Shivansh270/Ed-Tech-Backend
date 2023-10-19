@@ -29,7 +29,7 @@ const {
   createRating,
   getAverageRating,
   getAllRating,
-} = require("../controllers/RatingAndReview");
+} = require("../controllers/RaitingAndReview");
 
 const {
   auth,

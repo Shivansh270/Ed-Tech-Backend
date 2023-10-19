@@ -100,8 +100,6 @@ exports.verifySignature = async (req, res) => {
     const { courseId, userId } = req.body.payload.payment.entity.notes;
 
     try {
-      //fulfil the action
-
       //find the course and enroll the student in it
       const enrolledCourse = await Course.findOneAndUpdate(
         { _id: courseId },
@@ -127,7 +125,7 @@ exports.verifySignature = async (req, res) => {
 
       console.log(enrolledStudent);
 
-      //mail send krdo confirmation wala
+      //send mail
       const emailResponse = await mailSender(
         enrolledStudent.email,
         "Congratulations from CodeHelp",
@@ -153,4 +151,3 @@ exports.verifySignature = async (req, res) => {
     });
   }
 };
-``;

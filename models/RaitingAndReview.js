@@ -7,11 +7,11 @@ const raitingAndReview = new mongoose.Schema({
     ref: "User",
   },
   raiting: {
-    type: string,
+    type: String,
     required: true,
   },
   review: {
-    type: string,
+    type: String,
     required: true,
     trim: true,
   },
