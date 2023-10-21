@@ -31,7 +31,6 @@ async function sendVerificationEmail(email, otp) {
 }
 
 OTPSchema.pre("save", async function (next) {
-  // Use a regular function, not an arrow function
   console.log("New document saved to database");
 
   if (this.isNew) {
