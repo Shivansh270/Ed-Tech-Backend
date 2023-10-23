@@ -128,24 +128,25 @@ exports.getAllCourses = async (req, res) => {
       {},
       {
         courseName: true,
-        courseDescription: true,
         price: true,
-        whatYouWillLearn: true,
-        instructor: true,
-        raitingAndReviews: true,
         thumbnail: true,
+        instructor: true,
+        ratingAndReviews: true,
+        studentsEnroled: true,
       }
     )
       .populate("instructor")
       .exec();
     return res.status(200).json({
       success: true,
-      message: "All Course fetched sucessfully",
+      data: allCourses,
     });
   } catch (error) {
-    return res.status(500).json({
+    console.log(error);
+    return res.status(404).json({
       success: false,
-      message: error.message,
+      message: `Can't Fetch Course Data`,
+      error: error.message,
     });
   }
 };
@@ -156,35 +157,36 @@ exports.getCourseDetails = async (req, res) => {
   try {
     //get id
     const { courseId } = req.body;
-
-    //find course detail
-    const courseDetail = await Course.find(courseId)
+    //find course details
+    const courseDetails = await Course.find({ _id: courseId })
       .populate({
         path: "instructor",
         populate: {
           path: "additionalDetails",
         },
       })
-      .populate("courseContent")
-      .populate("raitingAndReviews")
+      .populate("category")
+      //.populate("ratingAndreviews")
       .populate({
         path: "courseContent",
         populate: {
           path: "subSection",
         },
-      });
-    exec();
+      })
+      .exec();
 
-    if (!courseDetail) {
+    //validation
+    if (!courseDetails) {
       return res.status(400).json({
         success: false,
-        message: `Could not find this course with id ${courseId}`,
+        message: `Could not find the course with ${courseId}`,
       });
     }
-
+    //return response
     return res.status(200).json({
       success: true,
-      message: "Course details fetched successfully",
+      message: "Course Details fetched successfully",
+      data: courseDetails,
     });
   } catch (error) {
     console.log(error);

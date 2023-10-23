@@ -1,24 +1,17 @@
 const mongoose = require("mongoose");
 
 const course = new mongoose.Schema({
-  courseName: {
-    type: String,
-    trim: true,
-    required: true,
-  },
-  courseDescription: {
-    type: String,
-    trim: true,
-    required: true,
-  },
+  courseName: { type: String },
+
+  courseDescription: { type: String },
+
   instructor: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "User",
+    ref: "user",
   },
   whatYouWillLearn: {
     type: String,
-    trim: true,
   },
   courseContent: [
     {
@@ -26,40 +19,39 @@ const course = new mongoose.Schema({
       ref: "Section",
     },
   ],
-  raitingAndReviews: [
+  ratingAndReviews: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "RaitingAndReview",
+      ref: "RatingAndReview",
     },
   ],
   price: {
     type: Number,
   },
   thumbnail: {
-    type: [String],
+    type: String,
   },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-  },
-
   tag: {
     type: [String],
     required: true,
   },
-
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    // required: true,
+    ref: "Category",
+  },
   studentsEnrolled: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
       required: true,
+      ref: "user",
     },
   ],
   instructions: {
     type: [String],
   },
   status: {
-    type: [String],
+    type: String,
     enum: ["Draft", "Published"],
   },
 });
